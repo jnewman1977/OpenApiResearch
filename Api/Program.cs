@@ -4,19 +4,18 @@ using Api.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddSingleton<IJsonGeneratorConfiguration, JsonGeneratorConfiguration>();
+builder.Services
+    .AddLogging()
+    .AddSingleton<IJsonGeneratorConfiguration, JsonGeneratorConfiguration>()
+    .AddSingleton<IUserGroupService, UserGroupService>();
 
 builder.Services
-    .AddHttpClient(ConfigurationConstants.DefaultHttpClientName,
-        (services, client) =>
-        {
-            var config = services.GetRequiredService<IJsonGeneratorConfiguration>();
-            client.BaseAddress = new Uri(config.BaseUrl);
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.AccessToken}");
-        });
-
-builder.Services.AddSingleton<IUserGroupService, UserGroupService>();
-
+    .AddHttpClient<IUserGroupService, UserGroupService>((services, client) =>
+    {
+        var config = services.GetRequiredService<IJsonGeneratorConfiguration>();
+        client.BaseAddress = new Uri(config.BaseUrl);
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.AccessToken}");
+    });
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

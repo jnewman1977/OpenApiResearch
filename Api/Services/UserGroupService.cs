@@ -3,54 +3,40 @@ using Api.Models;
 
 namespace Api.Services;
 
-public class UserGroupService : IUserGroupService
+public sealed class UserGroupService : IUserGroupService
 {
-    private readonly ILogger<UserGroupService> logger;
     private readonly IHostEnvironment hostEnvironment;
-    private readonly IHttpClientFactory httpClientFactory;
+    private readonly HttpClient httpClient;
     private readonly IJsonGeneratorConfiguration jsonGeneratorConfiguration;
+    private readonly ILogger<UserGroupService> logger;
 
     public UserGroupService(
-        ILogger<UserGroupService> logger,
         IHostEnvironment hostEnvironment,
-        IHttpClientFactory httpClientFactory,
-        IJsonGeneratorConfiguration jsonGeneratorConfiguration)
+        HttpClient httpClient,
+        IJsonGeneratorConfiguration jsonGeneratorConfiguration,
+        ILogger<UserGroupService> logger)
     {
         this.logger = logger;
         this.hostEnvironment = hostEnvironment;
-        this.httpClientFactory = httpClientFactory;
+        this.httpClient = httpClient;
         this.jsonGeneratorConfiguration = jsonGeneratorConfiguration;
     }
 
     public async Task<IEnumerable<UserGroup>> GetUserGroupsAsync()
     {
-        logger.LogDebug("Executing {MethodName}",nameof(GetUserGroupsAsync));
+        logger.LogDebug("{MethodName} | Http Base Address: {BaseUrl}",
+            nameof(GetUserGroupsAsync),  httpClient.BaseAddress);
+        logger.LogDebug("{MethodName} | Http Auth Header: {AuthHeader}",
+            nameof(GetUserGroupsAsync),  httpClient.DefaultRequestHeaders.Authorization);
+        logger.LogDebug("{MethodName} | Http Request Url: {RequestUrl}",
+            nameof(GetUserGroupsAsync),  jsonGeneratorConfiguration.UserGroupsUrl);
 
-        var client = httpClientFactory.CreateClient(ConfigurationConstants.DefaultHttpClientName);
-        
-        logger.LogDebug("{MethodName} {BaseUrl}", 
-            nameof(GetUserGroupsAsync), client.BaseAddress);
-        logger.LogDebug("{MethodName} {AuthHeader}", 
-            nameof(GetUserGroupsAsync), client.DefaultRequestHeaders.Authorization);
-        logger.LogDebug("{MethodName} {RequestUrl}", 
-            nameof(GetUserGroupsAsync), jsonGeneratorConfiguration.UserGroupsUrl);
-        
-        var response = await client.GetAsync(jsonGeneratorConfiguration.UserGroupsUrl);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new ApplicationException(response.ReasonPhrase);
-        }
-
-        var result = await response.Content
-            .ReadFromJsonAsync<List<UserGroup>>()
+        var response = await httpClient
+            .GetFromJsonAsync<List<UserGroup>>(jsonGeneratorConfiguration.UserGroupsUrl)
             .ConfigureAwait(!hostEnvironment.IsEnvironment("Testing"));
 
-        if (result == null)
-        {
-            return Array.Empty<UserGroup>();
-        }
-
-        return result;
+        return response != null
+            ? response.ToArray()
+            : Array.Empty<UserGroup>();
     }
 }
