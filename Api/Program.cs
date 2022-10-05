@@ -13,7 +13,7 @@ builder.Services
     .AddHttpClient<IUserGroupService, UserGroupService>((services, client) =>
     {
         var config = services.GetRequiredService<IJsonGeneratorConfiguration>();
-        client.BaseAddress = new Uri(config.BaseUrl);
+        client.BaseAddress = new Uri(config.UserGroupsUrl);
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.AccessToken}");
     });
 

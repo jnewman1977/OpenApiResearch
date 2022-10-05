@@ -13,12 +13,12 @@ public class UserGroupController : ControllerBase
     private readonly IUserGroupService userGroupService;
 
     public UserGroupController(
-        ILogger<UserGroupController> logger,
         IHostEnvironment hostEnvironment,
+        ILogger<UserGroupController> logger,
         IUserGroupService userGroupService)
     {
-        this.logger = logger;
         this.hostEnvironment = hostEnvironment;
+        this.logger = logger;
         this.userGroupService = userGroupService;
     }
 
@@ -30,8 +30,8 @@ public class UserGroupController : ControllerBase
         try
         {
             var result = await userGroupService
-                    .GetUserGroupsAsync()
-                    .ConfigureAwait(!hostEnvironment.IsEnvironment("Testing"));
+                .GetUserGroupsAsync()
+                .ConfigureAwait(!hostEnvironment.IsEnvironment("Testing"));
 
             var data = result.ToArray();
 
