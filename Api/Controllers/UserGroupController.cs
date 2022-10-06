@@ -45,4 +45,30 @@ public class UserGroupController : ControllerBase
             throw;
         }
     }
+
+    [HttpGet("{id}/users")]
+    public async Task<IEnumerable<User>?> GetUsers(string id)
+    {
+        logger.LogDebug("Getting User Groups");
+
+        try
+        {
+            var result = await userGroupService
+                .GetUserGroupsAsync()
+                .ConfigureAwait(!hostEnvironment.IsEnvironment("Testing"));
+
+            var data = result.FirstOrDefault(grp =>
+                grp.Id.Equals(id, StringComparison.CurrentCultureIgnoreCase));
+
+            logger.LogDebug("Users returned = {UserCount}", data?.Users?.Count());
+
+            return data?.Users;
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "There was a problem retrieving user groups.");
+            throw;
+        }
+        
+    }
 }
