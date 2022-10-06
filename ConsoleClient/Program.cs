@@ -5,20 +5,27 @@ using Api.Client;
 var baseUrl = "https://localhost:7210";
 var client = new ApiClient(baseUrl, new HttpClient());
 
-// var data = await client
-//     .UserGroupAsync()
-//     .ConfigureAwait(true);
+var groups = await client
+    .UserGroupAsync()
+    .ConfigureAwait(true);
 
-var data = await client.UsersAsync("633df04e15036b35f4b1ce89").ConfigureAwait(true);
+Console.ForegroundColor = ConsoleColor.Green;
+Console.WriteLine("{0}Groups{0}", Environment.NewLine);
+Console.ResetColor();
 
-// data.ToList().ForEach(g =>
-// {
-//     Console.WriteLine($"Group - Id: {g.Id}, Name: {g.Name}");
-//     g.Users.ToList().ForEach(u => Console.WriteLine(
-//         $"User - Id: {u.Id}, Name: {u.Name}, Email: {u.Email}, First Name: {u.FirstName}, Last Name: {u.LastName}"));
-// });
+groups.ToList().ForEach(g =>
+{
+    Console.WriteLine($"Group - Id: {g.Id}, Name: {g.Name}");
+});
 
-data.ToList().ForEach(u =>
+var group = groups.Skip(2).Take(1).First();
+var users = await client.UsersAsync(group.Id).ConfigureAwait(true);
+
+Console.ForegroundColor = ConsoleColor.Green;
+Console.WriteLine($"{Environment.NewLine}Users for Group [{group.Id}] - {group.Name}{Environment.NewLine}");
+Console.ResetColor();
+
+users.ToList().ForEach(u =>
 {
     Console.WriteLine($"User - Id: {u.Id}, Name: {u.Name}, Email: {u.Email}, First Name: {u.FirstName}, Last Name: {u.LastName}");
 });

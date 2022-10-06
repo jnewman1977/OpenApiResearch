@@ -22,6 +22,26 @@ public class UserGroupController : ControllerBase
         this.userGroupService = userGroupService;
     }
 
+    /// <summary>
+    /// Gets a list of user groups.
+    /// </summary>
+    /// <remarks>
+    /// [
+    ///     {
+    ///         "id": "633df04e03cb9fd96d1f696b",
+    ///         "name": "Group Qualitern",
+    ///         "users": [
+    ///             {
+    ///                 "id": "633df04ed221191ceadbffdf",
+    ///                 "name": "Rivas Keith",
+    ///                 "email": "rkeith@gmail.com",
+    ///                 "firstName": "Rivas",
+    ///                 "lastName": "Keith"
+    ///             }
+    ///         ]
+    ///     }
+    /// ]
+    /// </remarks>
     [HttpGet]
     public async Task<IEnumerable<UserGroup>?> Get()
     {
@@ -46,6 +66,21 @@ public class UserGroupController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Gets a list of users for the given group.
+    /// </summary>
+    /// <param name="id">The group id.</param>
+    /// <remarks>
+    ///     [
+    ///             {
+    ///                 "id": "633df04ed221191ceadbffdf",
+    ///                 "name": "Rivas Keith",
+    ///                 "email": "rkeith@gmail.com",
+    ///                 "firstName": "Rivas",
+    ///                 "lastName": "Keith"
+    ///             }
+    ///     ] 
+    /// </remarks>
     [HttpGet("{id}/users")]
     public async Task<IEnumerable<User>?> GetUsers(string id)
     {

@@ -1,0 +1,11 @@
+<div style="display: flex; flex-direction: column">
+  <div style="display: flex; flex-direction: column" *ngFor="let group of groups$ | async">
+    <div>{{group.name}}
+      <button (click)="getUsers(group.id)">*</button>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column" *ngFor="let user of users$ | async">
+    <div>{{user.name}}</div>
+  </div>
+</div>
