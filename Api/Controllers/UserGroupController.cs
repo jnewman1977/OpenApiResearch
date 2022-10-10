@@ -52,7 +52,7 @@ public class UserGroupController : ControllerBase
     /// <response code="200">Results returned with no errors.</response>
     /// <response code="401">Unauthorized.</response>
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get([FromQuery] ApiSelector apiSelector = null)
     {
         logger.LogDebug("Getting User Groups");
 
