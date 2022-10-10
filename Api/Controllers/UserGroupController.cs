@@ -6,6 +6,7 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Produces("application/json")]
 public class UserGroupController : ControllerBase
 {
     private readonly IHostEnvironment hostEnvironment;
@@ -26,24 +27,32 @@ public class UserGroupController : ControllerBase
     /// Gets a list of user groups.
     /// </summary>
     /// <remarks>
-    /// [
+    /// Sample Response:
+    /// 
+    ///     GET /UserGroup
     ///     {
-    ///         "id": "633df04e03cb9fd96d1f696b",
-    ///         "name": "Group Qualitern",
-    ///         "users": [
-    ///             {
-    ///                 "id": "633df04ed221191ceadbffdf",
-    ///                 "name": "Rivas Keith",
-    ///                 "email": "rkeith@gmail.com",
-    ///                 "firstName": "Rivas",
-    ///                 "lastName": "Keith"
-    ///             }
-    ///         ]
+    ///         "data":
+    ///             [
+    ///                 {
+    ///                     "id": "633df04e03cb9fd96d1f696b",
+    ///                     "name": "Group Qualitern",
+    ///                     "users": [
+    ///                         {
+    ///                             "id": "633df04ed221191ceadbffdf",
+    ///                             "name": "Rivas Keith",
+    ///                             "email": "rkeith@gmail.com",
+    ///                             "firstName": "Rivas",
+    ///                             "lastName": "Keith"
+    ///                         }
+    ///                     ]
+    ///                 }
+    ///             ]
     ///     }
-    /// ]
     /// </remarks>
+    /// <response code="200">Results returned with no errors.</response>
+    /// <response code="401">Unauthorized.</response>
     [HttpGet]
-    public async Task<IEnumerable<UserGroup>?> Get()
+    public async Task<IActionResult> Get()
     {
         logger.LogDebug("Getting User Groups");
 
@@ -57,7 +66,7 @@ public class UserGroupController : ControllerBase
 
             logger.LogDebug("Users returned = {UserCount}", data.Length);
 
-            return data;
+            return Ok(new { data });
         }
         catch (Exception e)
         {
@@ -71,18 +80,28 @@ public class UserGroupController : ControllerBase
     /// </summary>
     /// <param name="id">The group id.</param>
     /// <remarks>
-    ///     [
-    ///             {
-    ///                 "id": "633df04ed221191ceadbffdf",
-    ///                 "name": "Rivas Keith",
-    ///                 "email": "rkeith@gmail.com",
-    ///                 "firstName": "Rivas",
-    ///                 "lastName": "Keith"
-    ///             }
-    ///     ] 
+    /// Sample Response:
+    /// 
+    ///     GET /UserGroup/{id}/Users
+    ///     {
+    ///         "data":
+    ///             [
+    ///                     {
+    ///                         "id": "633df04ed221191ceadbffdf",
+    ///                         "name": "Rivas Keith",
+    ///                         "email": "rkeith@gmail.com",
+    ///                         "firstName": "Rivas",
+    ///                         "lastName": "Keith"
+    ///                     }
+    ///             ]
+    ///     } 
     /// </remarks>
-    [HttpGet("{id}/users")]
-    public async Task<IEnumerable<User>?> GetUsers(string id)
+    /// <response code="200">Results returned with no errors.</response>
+    /// <response code="204">No records found.</response>
+    /// <response code="401">Unauthorized.</response>
+    [HttpGet]
+    [Route("{id}/users")]
+    public async Task<IActionResult> GetUsers(string id)
     {
         logger.LogDebug("Getting User Groups");
 
@@ -95,15 +114,46 @@ public class UserGroupController : ControllerBase
             var data = result.FirstOrDefault(grp =>
                 grp.Id.Equals(id, StringComparison.CurrentCultureIgnoreCase));
 
-            logger.LogDebug("Users returned = {UserCount}", data?.Users?.Count());
+            logger.LogDebug("Users returned = {UserCount}", data?.Users.Count());
 
-            return data?.Users;
+            if (data?.Users == null || data?.Users.Count() < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok(new { data = data?.Users });
         }
         catch (Exception e)
         {
             logger.LogError(e, "There was a problem retrieving user groups.");
             throw;
         }
-        
+    }
+
+    /// <summary>
+    /// Creates a new user in the given user group.
+    /// </summary>
+    /// <param name="id">The <see cref="string"/> id of the user group.</param> 
+    /// <param name="user">The <see cref="User"/> to create.</param>
+    /// <remarks>
+    /// Sample Request:
+    ///
+    ///     POST /UserGroup/{id}/Create
+    ///     {
+    ///         "name": "Fred Flinstone",
+    ///         "email": "FredFlinstone@gmail.com",
+    ///         "firstName": "Fred",
+    ///         "lastName": "Flinstone"
+    ///     }
+    /// </remarks>
+    /// <returns>The <see cref="User"/> record which was created.</returns>
+    /// <response code="200">User created successfully with no errors.</response>
+    /// <response code="400">Bad request.</response>
+    /// <response code="401">Unauthorized.</response>
+    [HttpPost]
+    [Route("{id}/create")]
+    public async Task<IActionResult> CreateUser(string id, [FromBody] User user)
+    {
+        return Ok(user);
     }
 }

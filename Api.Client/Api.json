@@ -1,8 +1,9 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Api",
-    "version": "1.0"
+    "title": "Open API Research",
+    "description": "An ASP.NET Core Web API for research",
+    "version": "v1"
   },
   "paths": {
     "/UserGroup": {
@@ -10,27 +11,13 @@
         "tags": [
           "UserGroup"
         ],
+        "summary": "Gets a list of user groups.",
+        "description": "Sample Response:\r\n\r\n    GET /UserGroup\r\n    [\r\n        {\r\n            \"id\": \"633df04e03cb9fd96d1f696b\",\r\n            \"name\": \"Group Qualitern\",\r\n            \"users\": [\r\n                {\r\n                    \"id\": \"633df04ed221191ceadbffdf\",\r\n                    \"name\": \"Rivas Keith\",\r\n                    \"email\": \"rkeith@gmail.com\",\r\n                    \"firstName\": \"Rivas\",\r\n                    \"lastName\": \"Keith\"\r\n                }\r\n            ]\r\n        }\r\n    ]",
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "Results returned with no errors.",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserGroup"
-                  }
-                }
-              },
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserGroup"
-                  }
-                }
-              },
-              "text/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -39,6 +26,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized."
           }
         }
       }
@@ -48,10 +38,13 @@
         "tags": [
           "UserGroup"
         ],
+        "summary": "Gets a list of users for the given group.",
+        "description": "Sample Response:\r\n\r\n    GET /UserGroup/{id}/Users\r\n    [\r\n            {\r\n                \"id\": \"633df04ed221191ceadbffdf\",\r\n                \"name\": \"Rivas Keith\",\r\n                \"email\": \"rkeith@gmail.com\",\r\n                \"firstName\": \"Rivas\",\r\n                \"lastName\": \"Keith\"\r\n            }\r\n    ]",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "The group id.",
             "required": true,
             "schema": {
               "type": "string"
@@ -60,25 +53,9 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "Results returned with no errors.",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/User"
-                  }
-                }
-              },
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/User"
-                  }
-                }
-              },
-              "text/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -87,6 +64,70 @@
                 }
               }
             }
+          },
+          "204": {
+            "description": "No records found."
+          },
+          "401": {
+            "description": "Unauthorized."
+          }
+        }
+      }
+    },
+    "/UserGroup/{id}/create": {
+      "post": {
+        "tags": [
+          "UserGroup"
+        ],
+        "summary": "Creates a new user in the given user group.",
+        "description": "Sample Request:\r\n            \r\n    POST /UserGroup/{id}/Create\r\n    {\r\n        \"name\": \"Fred Flinstone\",\r\n        \"email\": \"FredFlinstone@gmail.com\",\r\n        \"firstName\": \"Fred\",\r\n        \"lastName\": \"Flinstone\"\r\n    }",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The System.String id of the user group.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The Api.Models.User to create.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User created successfully with no errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request."
+          },
+          "401": {
+            "description": "Unauthorized."
           }
         }
       }
