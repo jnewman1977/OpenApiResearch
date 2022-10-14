@@ -12,7 +12,7 @@
           "UserGroup"
         ],
         "summary": "Gets a list of user groups.",
-        "description": "Sample Response:\r\n\r\n    GET /UserGroup\r\n    [\r\n        {\r\n            \"id\": \"633df04e03cb9fd96d1f696b\",\r\n            \"name\": \"Group Qualitern\",\r\n            \"users\": [\r\n                {\r\n                    \"id\": \"633df04ed221191ceadbffdf\",\r\n                    \"name\": \"Rivas Keith\",\r\n                    \"email\": \"rkeith@gmail.com\",\r\n                    \"firstName\": \"Rivas\",\r\n                    \"lastName\": \"Keith\"\r\n                }\r\n            ]\r\n        }\r\n    ]",
+        "description": "Sample Response:\r\n\r\n    GET /UserGroup\r\n    {\r\n        \"data\":\r\n            [\r\n                {\r\n                    \"id\": \"633df04e03cb9fd96d1f696b\",\r\n                    \"name\": \"Group Qualitern\",\r\n                    \"users\": [\r\n                        {\r\n                            \"id\": \"633df04ed221191ceadbffdf\",\r\n                            \"name\": \"Rivas Keith\",\r\n                            \"email\": \"rkeith@gmail.com\",\r\n                            \"firstName\": \"Rivas\",\r\n                            \"lastName\": \"Keith\"\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n    }",
         "responses": {
           "200": {
             "description": "Results returned with no errors.",
@@ -39,7 +39,7 @@
           "UserGroup"
         ],
         "summary": "Gets a list of users for the given group.",
-        "description": "Sample Response:\r\n\r\n    GET /UserGroup/{id}/Users\r\n    [\r\n            {\r\n                \"id\": \"633df04ed221191ceadbffdf\",\r\n                \"name\": \"Rivas Keith\",\r\n                \"email\": \"rkeith@gmail.com\",\r\n                \"firstName\": \"Rivas\",\r\n                \"lastName\": \"Keith\"\r\n            }\r\n    ]",
+        "description": "Sample Response:\r\n\r\n    GET /UserGroup/{id}/Users\r\n    {\r\n        \"data\":\r\n            [\r\n                    {\r\n                        \"id\": \"633df04ed221191ceadbffdf\",\r\n                        \"name\": \"Rivas Keith\",\r\n                        \"email\": \"rkeith@gmail.com\",\r\n                        \"firstName\": \"Rivas\",\r\n                        \"lastName\": \"Keith\"\r\n                    }\r\n            ]\r\n    }",
         "parameters": [
           {
             "name": "id",
@@ -114,14 +114,7 @@
         },
         "responses": {
           "200": {
-            "description": "User created successfully with no errors.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
+            "description": "User created successfully with no errors."
           },
           "400": {
             "description": "Bad request."

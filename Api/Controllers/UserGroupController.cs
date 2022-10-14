@@ -1,12 +1,14 @@
 ﻿using Api.Models;
 using Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 [Produces("application/json")]
+[Consumes("application/json")]
 public class UserGroupController : ControllerBase
 {
     private readonly IHostEnvironment hostEnvironment;
@@ -49,10 +51,12 @@ public class UserGroupController : ControllerBase
     ///             ]
     ///     }
     /// </remarks>
-    /// <response code="200">Results returned with no errors.</response>
-    /// <response code="401">Unauthorized.</response>
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] ApiSelector apiSelector = null)
+    [SwaggerResponse(StatusCodes.Status200OK)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized)]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(StatusCodes.Status503ServiceUnavailable)]    
+    public async Task<IEnumerable<UserGroup>> Get()
     {
         logger.LogDebug("Getting User Groups");
 
@@ -66,7 +70,7 @@ public class UserGroupController : ControllerBase
 
             logger.LogDebug("Users returned = {UserCount}", data.Length);
 
-            return Ok(new { data });
+            return data;
         }
         catch (Exception e)
         {
@@ -96,12 +100,13 @@ public class UserGroupController : ControllerBase
     ///             ]
     ///     } 
     /// </remarks>
-    /// <response code="200">Results returned with no errors.</response>
-    /// <response code="204">No records found.</response>
-    /// <response code="401">Unauthorized.</response>
     [HttpGet]
     [Route("{id}/users")]
-    public async Task<IActionResult> GetUsers(string id)
+    [SwaggerResponse(StatusCodes.Status200OK)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized)]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(StatusCodes.Status503ServiceUnavailable)]    
+    public async Task<IEnumerable<User>> GetUsers(string id)
     {
         logger.LogDebug("Getting User Groups");
 
@@ -116,12 +121,7 @@ public class UserGroupController : ControllerBase
 
             logger.LogDebug("Users returned = {UserCount}", data?.Users.Count());
 
-            if (data?.Users == null || data?.Users.Count() < 1)
-            {
-                return NoContent();
-            }
-
-            return Ok(new { data = data?.Users });
+            return data?.Users;
         }
         catch (Exception e)
         {

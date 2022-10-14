@@ -29,10 +29,10 @@ builder.Services.AddSwaggerGen(options =>
     {
         Version = "v1",
         Title = "Open API Research",
-        Description = "An ASP.NET Core Web API for research",
+        Description = "An ASP.NET Core Web API for research"
     });
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));    
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 builder.Services.AddCors(x => x.AddDefaultPolicy(new CorsPolicy { Origins = { "*" } }));

@@ -5,9 +5,7 @@ using Api.Client;
 var baseUrl = "https://localhost:7210";
 var client = new ApiClient(baseUrl, new HttpClient());
 
-var groups = await client
-    .UserGroupAsync()
-    .ConfigureAwait(true);
+var groups = await client.UserGroupAsync();
 
 Console.ForegroundColor = ConsoleColor.Green;
 Console.WriteLine("{0}Groups{0}", Environment.NewLine);
@@ -19,7 +17,7 @@ groups.ToList().ForEach(g =>
 });
 
 var group = groups.Skip(2).Take(1).First();
-var users = await client.UsersAsync(group.Id).ConfigureAwait(true);
+var users = await client.UsersAsync(group.Id);
 
 Console.ForegroundColor = ConsoleColor.Green;
 Console.WriteLine($"{Environment.NewLine}Users for Group [{group.Id}] - {group.Name}{Environment.NewLine}");
